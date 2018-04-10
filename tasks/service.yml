@@ -1,0 +1,15 @@
+
+- name: Create etcd3 service file
+  template: 
+      src: etcd3.service.j2
+      dest: /etc/systemd/system/etcd3.service
+      mode: 0444
+  notify: restart etcd3
+
+- name: Systemd changes
+  systemd:
+      daemon_reload: yes
+      enabled: yes
+      state: started
+      name: etcd3
+

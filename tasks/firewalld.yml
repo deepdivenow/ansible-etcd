@@ -1,0 +1,7 @@
+- firewalld:
+    zone: trusted
+    source: "{{ hostvars[item]['ansible_default_ipv4']['address'] }}"
+    permanent: true
+    state: enabled
+  with_items:
+  - "{{ etcd_nodes }}"

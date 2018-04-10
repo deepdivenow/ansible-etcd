@@ -1,54 +1,7 @@
-- name: Register the current ETCD version (if any)
-  command: bash -c "/usr/etcd/etcd --version | head -1"
-  ignore_errors: yes
-  register: etcd_version_check
-  changed_when: false
 
-- block: 
-    - name: download etcd
-      get_url: 
-        url: "{{ etcd_link }}"
-        dest: "/tmp/{{ etcd_link|basename }}"
+- import_tasks: install.yml
 
-    - name: Remove old installation of Stolon
-      file:
-        path: "{{ etcd_unarchive_prefix }}"
-        state: absent
+#- import_tasks: firewalld.yml
 
-    - name: Check work dir | {{ etcd_unarchive_prefix }}
-      file:
-        path: "{{ etcd_unarchive_prefix }}"
-        state: directory
-        mode: 755
-
-    - name: unpack etcd
-      unarchive: 
-        copy: no 
-        src: "/tmp/{{ etcd_link|basename }}"
-        dest: "{{ etcd_unarchive_prefix }}"
-        extra_opts: "--strip-components=1"
-
-    - name: Remove archive
-      file:
-        path: "/tmp/{{ etcd_link|basename }}"
-        state: absent
-
-  when: etcd_version_check is failed or etcd_version_check.stdout != etcd_version_target
-
-- name: Create etcd3 service file
-  template: 
-      src: etcd3.service.j2
-      dest: /etc/systemd/system/etcd3.service
-      mode: 0444
-  notify: restart etcd3
-
-- name: Systemd changes
-  systemd:
-      daemon_reload: yes
-      enabled: yes
-      state: started
-      name: etcd3
-
-
-
+- import_tasks: service.yml
 
