@@ -5,24 +5,25 @@ Conflicts=etcd.service
 Conflicts=etcd2.service
  
 [Service]
-Type=simple
+Type=notify
 Restart=always
 RestartSec=5s
 LimitNOFILE=40000
 TimeoutStartSec=0
- 
-ExecStart=/usr/etcd/etcd --name {{ inventory_hostname }} \
-    --data-dir /var/lib/etcd \
-    --listen-client-urls http://{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}:2379 \
-    --advertise-client-urls http://{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}:2379 \
-    --listen-peer-urls http://{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}:2380 \
-    --initial-advertise-peer-urls http://{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}:2380 \
-    --initial-cluster {% for host in etcd_nodes %}
+Environment="ETCD_NAME={{ inventory_hostname }}"
+Environment="ETCD_DATA_DIR=/var/lib/etcd"
+Environment="ETCD_LISTEN_CLIENT_URLS=http://{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}:2379"
+Environment="ETCD_ADVERTISE_CLIENT_URLS=http://{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}:2379"
+Environment="ETCD_LISTEN_PEER_URLS=http://{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}:2380"
+Environment="ETCD_INITIAL_ADVERTISE_PEER_URLS=http://{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}:2380"
+Environment="ETCD_INITIAL_CLUSTER={% for host in etcd_nodes %}
 {{ host }}=http://{{ hostvars[host]['ansible_default_ipv4']['address'] }}:2380{% if not loop.last %},{% endif %}
 {% endfor %}
- \
-    --initial-cluster-token {{ etcd_cluster_name }}-token \
-    --initial-cluster-state new
+" 
+Environment="ETCD_INITIAL_CLUSTER_TOKEN={{ etcd_cluster_name }}-token"
+Environment="ETCD_INITIAL_CLUSTER_STATE=new"
+ 
+ExecStart={{ etcd_unarchive_prefix }}/etcd
 
 [Install]
 WantedBy=multi-user.target
