@@ -1,4 +1,5 @@
 etcd_version: 3.2.18
 etcd_unarchive_prefix: /usr/etcd
 etcd_version_target: "etcd Version: {{ etcd_version }}"
+etcd_cluster_name: etcd_cluster
 etcd_link: "https://github.com/coreos/etcd/releases/download/v{{ etcd_version }}/etcd-v{{ etcd_version }}-linux-amd64.tar.gz"
