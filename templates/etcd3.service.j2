@@ -23,7 +23,7 @@ Environment="ETCD_INITIAL_CLUSTER={% for host in etcd_nodes %}
 Environment="ETCD_INITIAL_CLUSTER_TOKEN={{ etcd_cluster_name }}-token"
 Environment="ETCD_INITIAL_CLUSTER_STATE=new"
  
-ExecStart={{ etcd_unarchive_prefix }}/etcd
+ExecStart={{ etcd_unarchive_prefix }}/etcd --auto-compaction-retention=1
 
 [Install]
 WantedBy=multi-user.target

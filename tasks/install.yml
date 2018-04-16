@@ -6,12 +6,12 @@
   changed_when: false
 
 - block: 
-    - name: download etcd
+    - name: download {{ etcd_link }}
       get_url: 
         url: "{{ etcd_link }}"
         dest: "/tmp/{{ etcd_link|basename }}"
 
-    - name: Remove old installation of Stolon
+    - name: Remove old installation of {{ rolename }}
       file:
         path: "{{ etcd_unarchive_prefix }}"
         state: absent
@@ -22,14 +22,14 @@
         state: directory
         mode: 755
 
-    - name: unpack etcd
+    - name: unpack {{ rolename }}
       unarchive: 
         copy: no 
         src: "/tmp/{{ etcd_link|basename }}"
         dest: "{{ etcd_unarchive_prefix }}"
         extra_opts: "--strip-components=1"
 
-    - name: Remove archive
+    - name: Remove archive {{ etcd_link|basename }}
       file:
         path: "/tmp/{{ etcd_link|basename }}"
         state: absent
